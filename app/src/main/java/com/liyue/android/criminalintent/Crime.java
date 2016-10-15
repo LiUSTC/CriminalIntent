@@ -1,5 +1,7 @@
 package com.liyue.android.criminalintent;
 
+import android.text.format.DateFormat;
+
 import java.util.Date;
 import java.util.UUID;
 
@@ -29,8 +31,8 @@ public class Crime {
         mTitle = title;
     }
 
-    public Date getDate() {
-        return mDate;
+    public String getDate() {
+        return DateFormat.format("EEEE, MMMM dd, yyyy kk:mm", mDate).toString();
     }
 
     public void setDate(Date date) {
