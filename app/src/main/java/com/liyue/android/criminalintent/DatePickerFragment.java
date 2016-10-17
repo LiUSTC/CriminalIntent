@@ -1,5 +1,6 @@
 package com.liyue.android.criminalintent;
 
+import android.app.Dialog;
 import android.support.v4.app.DialogFragment;
 
 /**
@@ -7,5 +8,6 @@ import android.support.v4.app.DialogFragment;
  */
 
 public class DatePickerFragment extends DialogFragment {
-    
+    @Override
+    public Dialog
 }
