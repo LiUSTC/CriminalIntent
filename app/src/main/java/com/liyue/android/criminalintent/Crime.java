@@ -31,8 +31,16 @@ public class Crime {
         mTitle = title;
     }
 
-    public String getDate() {
-        return DateFormat.format("EEEE, MMMM dd, yyyy kk:mm", mDate).toString();
+    public Date getDate(){
+        return mDate;
+    }
+
+    public String getDateString() {
+        return DateFormat.format("EEEE, MMMM dd, yyyy", mDate).toString();
+    }
+
+    public String getTimeString(){
+        return DateFormat.format("kk:mm", mDate).toString();
     }
 
     public void setDate(Date date) {
