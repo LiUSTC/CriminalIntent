@@ -16,7 +16,11 @@ public class Record {
     private boolean mSolved;
 
     public Record(){
-        mId = UUID.randomUUID();
+        this(UUID.randomUUID());
+    }
+
+    public Record(UUID id){
+        mId = id;
         mDate = new Date();
     }
     public UUID getId() {

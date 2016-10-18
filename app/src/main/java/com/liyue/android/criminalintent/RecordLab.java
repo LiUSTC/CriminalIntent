@@ -1,6 +1,13 @@
 package com.liyue.android.criminalintent;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
+import com.liyue.android.criminalintent.database.RecordBaseHelper;
+import com.liyue.android.criminalintent.database.RecordCursorWrapper;
+import com.liyue.android.criminalintent.database.RecordDbSchema.RecordTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +19,8 @@ import java.util.UUID;
 
 public class RecordLab {
     private static RecordLab sRecordLab;
-    private List<Record> mRecords;
+    private Context mContext;
+    private SQLiteDatabase mDatabase;
 
     public static RecordLab get(Context context){
         if (sRecordLab == null){
@@ -22,27 +30,68 @@ public class RecordLab {
     }
 
     private RecordLab(Context context){
-        mRecords = new ArrayList<>();
+        mContext = context.getApplicationContext();
+        mDatabase = new RecordBaseHelper(mContext).getWritableDatabase();
+    }
+
+    public void updateRecord(Record r){
+        String uuidString = r.getId().toString();
+        ContentValues values = getContentValues(r);
+        mDatabase.update(RecordTable.NAME, values,RecordTable.Cols.UUID + " = ?",
+                new String[]{uuidString});
     }
 
     public void addRecord(Record r) {
-        mRecords.add(r);
+        ContentValues values = getContentValues(r);
+        mDatabase.insert(RecordTable.NAME, null, values);
     }
 
     public void removeRecord(Record r){
-        mRecords.remove(r);
+        mDatabase.delete(RecordTable.NAME, RecordTable.Cols.UUID + " = ?", new String[]{r.getId().toString()});
     }
 
     public List<Record> getRecords(){
-        return mRecords;
+        List<Record> records = new ArrayList<Record>();
+        RecordCursorWrapper cursor = queryRecords(null, null);
+
+        try{
+            cursor.moveToFirst();
+            while(!cursor.isAfterLast()){
+                records.add(cursor.getRecord());
+                cursor.moveToNext();
+            }
+        }finally {
+            cursor.close();
+        }
+        return records;
     }
 
     public Record getRecord(UUID id){
-        for (Record record : mRecords){
-            if (record.getId().equals(id)){
-                return record;
+        RecordCursorWrapper cursor = queryRecords(RecordTable.Cols.UUID + " = ?", new String[]{id.toString()});
+        try{
+            if (cursor.getCount() == 0){
+                return null;
             }
+
+            cursor.moveToFirst();
+            return cursor.getRecord();
+        }finally {
+            cursor.close();
         }
-        return null;
+    }
+
+    private static ContentValues getContentValues(Record record){
+        ContentValues values = new ContentValues();
+        values.put(RecordTable.Cols.UUID, record.getId().toString());
+        values.put(RecordTable.Cols.TITLE, record.getTitle());
+        values.put(RecordTable.Cols.DATE, record.getDate().getTime());
+        values.put(RecordTable.Cols.SOLVED, record.isSolved() ? 1 : 0);
+
+        return values;
+    }
+
+    private RecordCursorWrapper queryRecords(String whereClause, String[] whereArgs){
+        Cursor cursor = mDatabase.query(RecordTable.NAME, null, whereClause, whereArgs, null, null, null);
+        return new RecordCursorWrapper(cursor);
     }
 }

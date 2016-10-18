@@ -53,6 +53,12 @@ public class RecordFragment extends Fragment {
     }
 
     @Override
+    public void onPause(){
+        super.onPause();
+        RecordLab.get(getActivity()).updateRecord(mRecord);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.menu_item_delete_record:
