@@ -13,5 +13,10 @@
     <string name="new_record">创建新记事</string>
     <string name="show_subtitle">显示副标题</string>
     <string name="hide_subtitle">隐藏副标题</string>
-    <string name="subtitle_format">%1$d记事</string>
+    <plurals name="subtitle_plural">
+    <item quantity="one">%1$d项纪录</item>
+    <item quantity="other">%1$d项纪录</item>
+</plurals>
+    <string name="delete_record">删除</string>
+    <string name="empty_list">没有纪录，是否新建？</string>
 </resources>

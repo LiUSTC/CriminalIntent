@@ -25,9 +25,13 @@ public class RecordLab {
         mRecords = new ArrayList<>();
     }
 
-        public void addRecord(Record r){
-            mRecords.add(r);
-        }
+    public void addRecord(Record r) {
+        mRecords.add(r);
+    }
+
+    public void removeRecord(Record r){
+        mRecords.remove(r);
+    }
 
     public List<Record> getRecords(){
         return mRecords;

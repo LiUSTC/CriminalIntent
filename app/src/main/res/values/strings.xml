@@ -12,5 +12,10 @@
     <string name="new_record">New Record</string>
     <string name="show_subtitle">Show Subtitle</string>
     <string name="hide_subtitle">Hide Subtitle</string>
-    <string name="subtitle_format">%1$d records</string>
+    <plurals name="subtitle_plural">
+        <item quantity="one">%1$d record</item>
+        <item quantity="other">%1$d records</item>
+    </plurals>
+    <string name="delete_record">Delete</string>
+    <string name="empty_list">There\'s no records. Add new?</string>
 </resources>

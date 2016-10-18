@@ -13,7 +13,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -28,7 +30,9 @@ public class RecordListFragment extends Fragment {
             "com.liyue.android.recordintent.extra_subtitle_visible";
     private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
     private static final int REQUEST_RECORD = 1;
-    private RecyclerView mCrimeRecyclerView;
+    private RecyclerView mRecordRecyclerView;
+    private LinearLayout mEmptyListView;
+    private Button mAddNewButton;
     private RecordAdapter mAdapter;
     private boolean mSubtitleVisible;
 
@@ -36,14 +40,27 @@ public class RecordListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        if (getActivity().getIntent() != null)
+        {
+            mSubtitleVisible = getActivity().getIntent().getBooleanExtra(EXTRA_SUBTITLE_VISIBLE, false);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_record_list, container, false);
-        mCrimeRecyclerView = (RecyclerView)view.findViewById(R.id.record_recycler_view);
-        mCrimeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecordRecyclerView = (RecyclerView)view.findViewById(R.id.record_recycler_view);
+        mRecordRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        mEmptyListView = (LinearLayout)view.findViewById(R.id.empty_list_view);
+        mAddNewButton = (Button)view.findViewById(R.id.fragment_empty_list_add_new);
+        mAddNewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addNewRecord();
+            }
+        });
         if(savedInstanceState != null){
             mSubtitleVisible = savedInstanceState.getBoolean(SAVED_SUBTITLE_VISIBLE);
         }
@@ -52,12 +69,19 @@ public class RecordListFragment extends Fragment {
     }
 
     private void updateUI(){
+        if(RecordLab.get(getActivity()).getRecords().isEmpty()){
+            mRecordRecyclerView.setVisibility(View.INVISIBLE);
+            mEmptyListView.setVisibility(View.VISIBLE);
+        } else {
+            mRecordRecyclerView.setVisibility(View.VISIBLE);
+            mEmptyListView.setVisibility(View.INVISIBLE);
+        }
         RecordLab recordLab = RecordLab.get(getActivity());
         List<Record> records = recordLab.getRecords();
 
         if(mAdapter == null){
             mAdapter = new RecordAdapter(records);
-            mCrimeRecyclerView.setAdapter(mAdapter);
+            mRecordRecyclerView.setAdapter(mAdapter);
         }else{
             mAdapter.notifyDataSetChanged();
         }
@@ -94,11 +118,7 @@ public class RecordListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.menu_item_new_record:
-                Record record = new Record();
-                RecordLab.get(getActivity()).addRecord(record);
-                Intent intent = RecordPagerActivity.newIntent(getActivity(), record.getId());
-                intent.putExtra(EXTRA_SUBTITLE_VISIBLE, mSubtitleVisible);
-                startActivity(intent);
+                addNewRecord();
                 return true;
             case R.id.menu_item_show_subtitle:
                 mSubtitleVisible = !mSubtitleVisible;
@@ -119,10 +139,18 @@ public class RecordListFragment extends Fragment {
         }
     }
 
+    private void addNewRecord(){
+        Record record = new Record();
+        RecordLab.get(getActivity()).addRecord(record);
+        Intent intent = RecordPagerActivity.newIntent(getActivity(), record.getId());
+        intent.putExtra(EXTRA_SUBTITLE_VISIBLE, mSubtitleVisible);
+        startActivity(intent);
+    }
+
     private void updateSubtitle(){
         RecordLab recordLab = RecordLab.get(getActivity());
         int recordCount = recordLab.getRecords().size();
-        String subtitle = getString(R.string.subtitle_format, recordCount);
+        String subtitle = getResources().getQuantityString(R.plurals.subtitle_plural, recordCount, recordCount);
 
         if(!mSubtitleVisible){
             subtitle = null;

@@ -17,17 +17,26 @@ import java.util.UUID;
  */
 
 public class RecordPagerActivity extends AppCompatActivity {
-    private static final String EXTRA_CRIME_ID =
-            "com.liyue.android.recordintent.crime_id";
+    private static final String EXTRA_RECORD_ID =
+            "com.liyue.android.recordintent.record_id";
     private ViewPager mViewPager;
     private List<Record> mRecords;
+    private boolean mSubtitleVisible;
+
+    @Override
+    public Intent getParentActivityIntent(){
+        Intent intent = super.getParentActivityIntent();
+        intent.putExtra(RecordListFragment.EXTRA_SUBTITLE_VISIBLE, mSubtitleVisible);
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record_pager);
 
-        UUID crimeId = (UUID)getIntent().getSerializableExtra(EXTRA_CRIME_ID);
+        mSubtitleVisible = getIntent().getBooleanExtra(RecordListFragment.EXTRA_SUBTITLE_VISIBLE, false);
+        UUID crimeId = (UUID)getIntent().getSerializableExtra(EXTRA_RECORD_ID);
 
         mViewPager = (ViewPager)findViewById(R.id.activity_record_pager_view_pager);
         mRecords = RecordLab.get(this).getRecords();
@@ -55,7 +64,7 @@ public class RecordPagerActivity extends AppCompatActivity {
 
     public static Intent newIntent(Context packageContext, UUID crimeId){
         Intent intent = new Intent(packageContext, RecordPagerActivity.class);
-        intent.putExtra(EXTRA_CRIME_ID, crimeId);
+        intent.putExtra(EXTRA_RECORD_ID, crimeId);
         return intent;
     }
 }
