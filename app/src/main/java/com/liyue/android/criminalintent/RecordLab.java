@@ -35,6 +35,7 @@ public class RecordLab {
     }
 
     public void updateRecord(Record r){
+        //嘿嘿
         String uuidString = r.getId().toString();
         ContentValues values = getContentValues(r);
         mDatabase.update(RecordTable.NAME, values,RecordTable.Cols.UUID + " = ?",
