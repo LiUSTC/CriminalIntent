@@ -75,17 +75,16 @@ public class RecordListFragment extends Fragment {
         } else {
             mRecordRecyclerView.setVisibility(View.VISIBLE);
             mEmptyListView.setVisibility(View.INVISIBLE);
-        }
-        RecordLab recordLab = RecordLab.get(getActivity());
-        List<Record> records = recordLab.getRecords();
+            RecordLab recordLab = RecordLab.get(getActivity());
+            List<Record> records = recordLab.getRecords();
 
-        if(mAdapter == null){
-            mAdapter = new RecordAdapter(records);
-            mRecordRecyclerView.setAdapter(mAdapter);
-        }else{
-            mAdapter.notifyDataSetChanged();
+            if(mAdapter == null){
+                mAdapter = new RecordAdapter(records);
+                mRecordRecyclerView.setAdapter(mAdapter);
+            }else{
+                mAdapter.notifyDataSetChanged();
+            }
         }
-
         updateSubtitle();
     }
 
