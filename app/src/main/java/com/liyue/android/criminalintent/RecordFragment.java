@@ -38,14 +38,14 @@ public class RecordFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         UUID crimeId = (UUID)getArguments().getSerializable(ARG_RECORD_ID);
-        mRecord = RecordLab.get(getActivity()).getCrime(crimeId);
+        mRecord = RecordLab.get(getActivity()).getRecord(crimeId);
         returnResult();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View v = inflater.inflate(R.layout.fragment_record, container, false);
-        mTitleField = (EditText)v.findViewById(R.id.crime_title);
+        mTitleField = (EditText)v.findViewById(R.id.record_title);
         mTitleField.setText(mRecord.getTitle());
         mTitleField.addTextChangedListener(new TextWatcher() {
             @Override
@@ -63,7 +63,7 @@ public class RecordFragment extends Fragment {
 
             }
         });
-        mDateButton = (Button)v.findViewById(R.id.crime_date);
+        mDateButton = (Button)v.findViewById(R.id.record_date);
         mDateButton.setText(mRecord.getDateString());
         mDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,7 +75,7 @@ public class RecordFragment extends Fragment {
             }
         });
 
-        mTimeButton = (Button)v.findViewById(R.id.crime_time);
+        mTimeButton = (Button)v.findViewById(R.id.record_time);
         mTimeButton.setText(mRecord.getTimeString());
         mTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,7 +87,7 @@ public class RecordFragment extends Fragment {
             }
         });
 
-        mSolvedCheckBox = (CheckBox)v.findViewById(R.id.crime_solved);
+        mSolvedCheckBox = (CheckBox)v.findViewById(R.id.record_solved);
         mSolvedCheckBox.setChecked(mRecord.isSolved());
         mSolvedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

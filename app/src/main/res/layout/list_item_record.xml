@@ -7,8 +7,8 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/list_item_crime_title_text_view"
-        android:layout_toLeftOf="@+id/list_item_crime_solved_check_box"
+        android:id="@+id/list_item_record_title_text_view"
+        android:layout_toLeftOf="@+id/list_item_record_solved_check_box"
         android:textStyle="bold"
         android:padding="4dp"
         tools:text="Crime Title"/>
@@ -16,9 +16,9 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/list_item_crime_date_text_view"
-        android:layout_toLeftOf="@+id/list_item_crime_solved_check_box"
-        android:layout_below = "@+id/list_item_crime_title_text_view"
+        android:id="@+id/list_item_record_date_text_view"
+        android:layout_toLeftOf="@+id/list_item_record_solved_check_box"
+        android:layout_below = "@+id/list_item_record_title_text_view"
         android:textStyle="bold"
         android:padding="4dp"
         tools:text="Crime Date"/>
@@ -27,7 +27,7 @@
         android:text="@string/record_solved_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/list_item_crime_solved_check_box"
+        android:id="@+id/list_item_record_solved_check_box"
         android:layout_alignParentRight="true"
         android:padding="4dp"/>
 

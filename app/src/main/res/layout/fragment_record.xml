@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:id="@+id/crime_title"
+        android:id="@+id/record_title"
         android:hint="@string/record_title_hint"/>
     <TextView
         android:layout_width="match_parent"
@@ -27,7 +27,7 @@
         android:layout_height="wrap_content">
 
         <Button
-            android:id="@+id/crime_date"
+            android:id="@+id/record_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
@@ -37,12 +37,12 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/crime_time"
+            android:id="@+id/record_time"
             android:layout_weight="1" />
     </LinearLayout>
 
     <CheckBox
-        android:id="@+id/crime_solved"
+        android:id="@+id/record_solved"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"

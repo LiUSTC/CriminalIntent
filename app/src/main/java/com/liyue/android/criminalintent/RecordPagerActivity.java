@@ -29,8 +29,8 @@ public class RecordPagerActivity extends AppCompatActivity {
 
         UUID crimeId = (UUID)getIntent().getSerializableExtra(EXTRA_CRIME_ID);
 
-        mViewPager = (ViewPager)findViewById(R.id.activity_crime_pager_view_pager);
-        mRecords = RecordLab.get(this).getCrimes();
+        mViewPager = (ViewPager)findViewById(R.id.activity_record_pager_view_pager);
+        mRecords = RecordLab.get(this).getRecords();
         FragmentManager fragmentManager = getSupportFragmentManager();
         mViewPager.setAdapter(new FragmentStatePagerAdapter(fragmentManager) {
             @Override
