@@ -18,14 +18,14 @@ import java.util.UUID;
 
 public class RecordPagerActivity extends AppCompatActivity {
     private static final String EXTRA_CRIME_ID =
-            "com.liyue.android.criminalintent.crime_id";
+            "com.liyue.android.recordintent.crime_id";
     private ViewPager mViewPager;
     private List<Record> mRecords;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_crime_pager);
+        setContentView(R.layout.activity_record_pager);
 
         UUID crimeId = (UUID)getIntent().getSerializableExtra(EXTRA_CRIME_ID);
 

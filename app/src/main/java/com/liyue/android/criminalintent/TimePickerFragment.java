@@ -22,7 +22,7 @@ import java.util.GregorianCalendar;
 
 public class TimePickerFragment extends DialogFragment {
     public static final String EXTRA_TIME =
-            "com.liyue.android.criminalintent.time";
+            "com.liyue.android.recordintent.time";
     private static final String ARG_TIME = "time";
     private TimePicker mTimePicker;
 

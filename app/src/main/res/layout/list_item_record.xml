@@ -24,7 +24,7 @@
         tools:text="Crime Date"/>
 
     <CheckBox
-        android:text="@string/crime_solved_label"
+        android:text="@string/record_solved_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/list_item_crime_solved_check_box"
