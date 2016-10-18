@@ -9,13 +9,13 @@ import java.util.UUID;
  * Created by hasee on 2016/10/14.
  */
 
-public class Crime {
+public class Record {
     private UUID mId;
     private String mTitle;
     private Date mDate;
     private boolean mSolved;
 
-    public Crime(){
+    public Record(){
         mId = UUID.randomUUID();
         mDate = new Date();
     }

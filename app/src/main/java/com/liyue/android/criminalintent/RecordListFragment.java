@@ -7,11 +7,12 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ import java.util.List;
  * Created by hasee on 2016/10/15.
  */
 
-public class CrimeListFragment extends Fragment {
+public class RecordListFragment extends Fragment {
     private static final int REQUEST_CRIME = 1;
     private RecyclerView mCrimeRecyclerView;
     private CrimeAdapter mAdapter;
@@ -36,11 +37,11 @@ public class CrimeListFragment extends Fragment {
     }
 
     private void updateUI(){
-        CrimeLab crimeLab = CrimeLab.get(getActivity());
-        List<Crime> crimes = crimeLab.getCrimes();
+        RecordLab recordLab = RecordLab.get(getActivity());
+        List<Record> records = recordLab.getCrimes();
 
         if(mAdapter == null){
-            mAdapter = new CrimeAdapter(crimes);
+            mAdapter = new CrimeAdapter(records);
             mCrimeRecyclerView.setAdapter(mAdapter);
         }else{
             mAdapter.notifyDataSetChanged();
@@ -54,6 +55,12 @@ public class CrimeListFragment extends Fragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_crime_list, menu);
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         if (requestCode == REQUEST_CRIME){
             if (resultCode == Activity.RESULT_OK){
@@ -63,7 +70,7 @@ public class CrimeListFragment extends Fragment {
     }
 
     private class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        public Crime mCrime;
+        public Record mRecord;
         private TextView mTitleTextView;
         private TextView mDateTextView;
         private CheckBox mSolvedCheckBox;
@@ -76,25 +83,25 @@ public class CrimeListFragment extends Fragment {
             mSolvedCheckBox = (CheckBox)itemView.findViewById(R.id.list_item_crime_solved_check_box);
         }
 
-        public void bindCrime(Crime crime){
-            mCrime = crime;
-            mTitleTextView.setText(mCrime.getTitle());
-            mDateTextView.setText(mCrime.getDateString());
-            mSolvedCheckBox.setChecked(mCrime.isSolved());
+        public void bindCrime(Record record){
+            mRecord = record;
+            mTitleTextView.setText(mRecord.getTitle());
+            mDateTextView.setText(mRecord.getDateString());
+            mSolvedCheckBox.setChecked(mRecord.isSolved());
         }
 
         @Override
         public void onClick(View v){
-            Intent intent = CrimePagerActivity.newIntent(getActivity(), mCrime.getId());
+            Intent intent = RecordPagerActivity.newIntent(getActivity(), mRecord.getId());
             startActivityForResult(intent, REQUEST_CRIME);
         }
     }
 
     private class CrimeAdapter extends RecyclerView.Adapter<CrimeHolder> {
-        private List<Crime> mCrimes;
+        private List<Record> mRecords;
 
-        public CrimeAdapter(List<Crime> crimes) {
-            mCrimes = crimes;
+        public CrimeAdapter(List<Record> records) {
+            mRecords = records;
         }
 
         @Override
@@ -106,13 +113,13 @@ public class CrimeListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(CrimeHolder holder, int position){
-            Crime crime = mCrimes.get(position);
-            holder.bindCrime(crime);
+            Record record = mRecords.get(position);
+            holder.bindCrime(record);
         }
 
         @Override
         public int getItemCount(){
-            return mCrimes.size();
+            return mRecords.size();
         }
     }
 }

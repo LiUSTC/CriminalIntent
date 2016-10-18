@@ -7,17 +7,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
@@ -25,13 +22,13 @@ import java.util.UUID;
  * Created by hasee on 2016/10/14.
  */
 
-public class CrimeFragment extends Fragment {
-    private static final String ARG_CRIME_ID = "crime_id";
+public class RecordFragment extends Fragment {
+    private static final String ARG_RECORD_ID = "crime_id";
     private static final String DIALOG_DATE = "dialog_date";
     private static final String DIALOG_TIME = "dialog_time";
     private static final int REQUEST_DATE = 0;
     private static final int REQUEST_TIME = 1;
-    private Crime mCrime;
+    private Record mRecord;
     private EditText mTitleField;
     private Button mDateButton;
     private Button mTimeButton;
@@ -40,8 +37,8 @@ public class CrimeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        UUID crimeId = (UUID)getArguments().getSerializable(ARG_CRIME_ID);
-        mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
+        UUID crimeId = (UUID)getArguments().getSerializable(ARG_RECORD_ID);
+        mRecord = RecordLab.get(getActivity()).getCrime(crimeId);
         returnResult();
     }
 
@@ -49,7 +46,7 @@ public class CrimeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View v = inflater.inflate(R.layout.fragment_crime, container, false);
         mTitleField = (EditText)v.findViewById(R.id.crime_title);
-        mTitleField.setText(mCrime.getTitle());
+        mTitleField.setText(mRecord.getTitle());
         mTitleField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -58,7 +55,7 @@ public class CrimeFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mCrime.setTitle(s.toString());
+                mRecord.setTitle(s.toString());
             }
 
             @Override
@@ -67,35 +64,35 @@ public class CrimeFragment extends Fragment {
             }
         });
         mDateButton = (Button)v.findViewById(R.id.crime_date);
-        mDateButton.setText(mCrime.getDateString());
+        mDateButton.setText(mRecord.getDateString());
         mDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FragmentManager manager = getFragmentManager();
-                DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());
-                dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
+                DatePickerFragment dialog = DatePickerFragment.newInstance(mRecord.getDate());
+                dialog.setTargetFragment(RecordFragment.this, REQUEST_DATE);
                 dialog.show(manager, DIALOG_DATE);
             }
         });
 
         mTimeButton = (Button)v.findViewById(R.id.crime_time);
-        mTimeButton.setText(mCrime.getTimeString());
+        mTimeButton.setText(mRecord.getTimeString());
         mTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FragmentManager manager = getFragmentManager();
-                TimePickerFragment dialog = TimePickerFragment.newInstance(mCrime.getDate());
-                dialog.setTargetFragment(CrimeFragment.this, REQUEST_TIME);
+                TimePickerFragment dialog = TimePickerFragment.newInstance(mRecord.getDate());
+                dialog.setTargetFragment(RecordFragment.this, REQUEST_TIME);
                 dialog.show(manager, DIALOG_TIME);
             }
         });
 
         mSolvedCheckBox = (CheckBox)v.findViewById(R.id.crime_solved);
-        mSolvedCheckBox.setChecked(mCrime.isSolved());
+        mSolvedCheckBox.setChecked(mRecord.isSolved());
         mSolvedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mCrime.setSolved(isChecked);
+                mRecord.setSolved(isChecked);
             }
         });
         return v;
@@ -108,13 +105,13 @@ public class CrimeFragment extends Fragment {
         }
 
         if (requestCode == REQUEST_DATE){
-            mCrime.setDate((Date)data.getSerializableExtra(DatePickerFragment.EXTRA_DATE));
-            mDateButton.setText(mCrime.getDateString());
+            mRecord.setDate((Date)data.getSerializableExtra(DatePickerFragment.EXTRA_DATE));
+            mDateButton.setText(mRecord.getDateString());
         }
 
         if (requestCode == REQUEST_TIME){
-            mCrime.setDate((Date)data.getSerializableExtra(TimePickerFragment.EXTRA_TIME));
-            mTimeButton.setText(mCrime.getTimeString());
+            mRecord.setDate((Date)data.getSerializableExtra(TimePickerFragment.EXTRA_TIME));
+            mTimeButton.setText(mRecord.getTimeString());
         }
     }
 
@@ -123,11 +120,11 @@ public class CrimeFragment extends Fragment {
         getActivity().setResult(Activity.RESULT_OK, null);
     }
 
-    public static CrimeFragment newInstance(UUID crimeId){
+    public static RecordFragment newInstance(UUID crimeId){
         Bundle args = new Bundle();
-        args.putSerializable(ARG_CRIME_ID, crimeId);
+        args.putSerializable(ARG_RECORD_ID, crimeId);
 
-        CrimeFragment fragment = new CrimeFragment();
+        RecordFragment fragment = new RecordFragment();
         fragment.setArguments(args);
         return fragment;
     }
