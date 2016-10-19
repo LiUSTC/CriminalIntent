@@ -166,7 +166,6 @@ public class RecordFragment extends Fragment {
 
         mReportButton = (Button)v.findViewById(R.id.record_report);
         mReportButton.setOnClickListener(new View.OnClickListener() {
-            //
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(Intent.ACTION_SEND);
