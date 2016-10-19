@@ -14,6 +14,7 @@ public class Record {
     private String mTitle;
     private Date mDate;
     private boolean mSolved;
+    private String mContact;
 
     public Record(){
         this(UUID.randomUUID());
@@ -39,12 +40,12 @@ public class Record {
         return mDate;
     }
 
-    public String getDateString() {
-        return DateFormat.format("EEEE, MMMM dd, yyyy", mDate).toString();
+    public String getContact() {
+        return mContact;
     }
 
-    public String getTimeString(){
-        return DateFormat.format("kk:mm", mDate).toString();
+    public void setContact(String Contact) {
+        this.mContact = Contact;
     }
 
     public void setDate(Date date) {
@@ -57,5 +58,13 @@ public class Record {
 
     public void setSolved(boolean solved) {
         mSolved = solved;
+    }
+
+    public String getDateString() {
+        return DateFormat.format("EEEE, MMMM dd, yyyy", mDate).toString();
+    }
+
+    public String getTimeString(){
+        return DateFormat.format("kk:mm", mDate).toString();
     }
 }

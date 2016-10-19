@@ -1,7 +1,6 @@
 package com.liyue.android.criminalintent.database;
 
 import android.content.Context;
-import android.database.ContentObservable;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -25,7 +24,9 @@ public class RecordBaseHelper extends SQLiteOpenHelper {
         RecordTable.Cols.UUID + "," +
         RecordTable.Cols.TITLE + "," +
         RecordTable.Cols.DATE + "," +
-        RecordTable.Cols.SOLVED + ")");
+        RecordTable.Cols.SOLVED + "," +
+        RecordTable.Cols.CONTACT + ")"
+        );
     }
 
     @Override

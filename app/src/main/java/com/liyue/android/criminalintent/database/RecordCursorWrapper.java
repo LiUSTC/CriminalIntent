@@ -23,11 +23,13 @@ public class RecordCursorWrapper extends CursorWrapper {
         String title = getString(getColumnIndex(RecordTable.Cols.TITLE));
         long date = getLong(getColumnIndex(RecordTable.Cols.DATE));
         int isSolved = getInt(getColumnIndex(RecordTable.Cols.SOLVED));
+        String contact = getString(getColumnIndex(RecordTable.Cols.CONTACT));
 
         Record record = new Record(UUID.fromString(uuidString));
         record.setTitle(title);
         record.setDate(new Date(date));
         record.setSolved(isSolved != 0);
+        record.setContact(contact);
 
         return record;
     }

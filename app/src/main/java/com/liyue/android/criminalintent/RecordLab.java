@@ -87,6 +87,7 @@ public class RecordLab {
         values.put(RecordTable.Cols.TITLE, record.getTitle());
         values.put(RecordTable.Cols.DATE, record.getDate().getTime());
         values.put(RecordTable.Cols.SOLVED, record.isSolved() ? 1 : 0);
+        values.put(RecordTable.Cols.CONTACT, record.getContact());
 
         return values;
     }

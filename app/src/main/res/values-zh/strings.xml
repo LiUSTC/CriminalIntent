@@ -19,4 +19,13 @@
 </plurals>
     <string name="delete_record">删除</string>
     <string name="empty_list">没有纪录，是否新建？</string>
+    <string name="record_contact_text">选择联系人</string>
+    <string name="send_report_text">发送报告</string>
+    <string name="record_report_solved">事件已解决</string>
+    <string name="record_report">%1$s！事件记录于%2$s。%3$s，%4$s</string>
+    <string name="record_report_unsolved">事件未解决</string>
+    <string name="record_report_no_contact">没有联系人</string>
+    <string name="record_report_contact">联系人是%s</string>
+    <string name="record_report_subject">记事器记录报告</string>
+    <string name="send_report">发送记录通过</string>
 </resources>

@@ -48,4 +48,20 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:text="@string/record_solved_label"/>
+
+    <Button
+        android:text="@string/record_contact_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/record_contact"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin" />
+
+    <Button
+        android:text="@string/send_report_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/record_report"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin" />
 </LinearLayout>

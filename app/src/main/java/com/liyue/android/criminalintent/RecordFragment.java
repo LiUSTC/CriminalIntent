@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -36,6 +37,7 @@ public class RecordFragment extends Fragment {
     private Button mDateButton;
     private Button mTimeButton;
     private CheckBox mSolvedCheckBox;
+    private Button mReportButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -123,6 +125,18 @@ public class RecordFragment extends Fragment {
                 mRecord.setSolved(isChecked);
             }
         });
+
+        mReportButton = (Button)v.findViewById(R.id.record_report);
+        mReportButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_SEND);
+                i.setType("text/plain");
+                i.putExtra(Intent.EXTRA_TEXT, getRecordReport());
+                i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.record_report_subject));
+                startActivity(i);
+            }
+        });
         return v;
     }
 
@@ -155,5 +169,27 @@ public class RecordFragment extends Fragment {
         RecordFragment fragment = new RecordFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    private String getRecordReport(){
+        String solvedString = null;
+        if (mRecord.isSolved()){
+            solvedString = getString(R.string.record_report_solved);
+        } else {
+            solvedString = getString(R.string.record_report_unsolved);
+        }
+
+        String dateFormat = "EEE, MMM dd";
+        String dateString = DateFormat.format(dateFormat, mRecord.getDate()).toString();
+
+        String contact = mRecord.getContact();
+        if (contact == null){
+            contact = getString(R.string.record_report_no_contact);
+        } else {
+            contact = getString(R.string.record_report_contact, contact);
+        }
+
+        String report = getString(R.string.record_report, mRecord.getTitle(), dateString, solvedString, contact);
+        return report;
     }
 }
