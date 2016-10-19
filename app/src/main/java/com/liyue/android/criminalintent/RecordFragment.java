@@ -2,9 +2,14 @@ package com.liyue.android.criminalintent;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.ShareCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
@@ -32,12 +37,14 @@ public class RecordFragment extends Fragment {
     private static final String DIALOG_TIME = "dialog_time";
     private static final int REQUEST_DATE = 0;
     private static final int REQUEST_TIME = 1;
+    private static final int REQUEST_CONTACT = 2;
     private Record mRecord;
     private EditText mTitleField;
     private Button mDateButton;
     private Button mTimeButton;
     private CheckBox mSolvedCheckBox;
     private Button mReportButton;
+    private Button mContactButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -126,6 +133,26 @@ public class RecordFragment extends Fragment {
             }
         });
 
+        final Intent pickContact = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+        mContactButton = (Button)v.findViewById(R.id.record_contact);
+        mContactButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(pickContact, REQUEST_CONTACT);
+            }
+        });
+
+        PackageManager packageManager = getActivity().getPackageManager();
+        if (packageManager.resolveActivity(pickContact, PackageManager.MATCH_DEFAULT_ONLY) == null){
+            mContactButton.setEnabled(false);
+        }
+
+        if (mRecord.getContact() != null){
+            mContactButton.setText(mRecord.getContact());
+        } else {
+            mContactButton.setText(getString(R.string.record_contact_text));
+        }
+
         mReportButton = (Button)v.findViewById(R.id.record_report);
         mReportButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,6 +161,7 @@ public class RecordFragment extends Fragment {
                 i.setType("text/plain");
                 i.putExtra(Intent.EXTRA_TEXT, getRecordReport());
                 i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.record_report_subject));
+                i = Intent.createChooser(i, getString(R.string.send_report));
                 startActivity(i);
             }
         });
@@ -154,6 +182,25 @@ public class RecordFragment extends Fragment {
         if (requestCode == REQUEST_TIME){
             mRecord.setDate((Date)data.getSerializableExtra(TimePickerFragment.EXTRA_TIME));
             mTimeButton.setText(mRecord.getTimeString());
+        }
+
+        if (requestCode == REQUEST_CONTACT && data != null){
+            Uri contactUri = data.getData();
+            String[] queryFields = new String[]{ContactsContract.Contacts.DISPLAY_NAME};
+
+            Cursor c = getActivity().getContentResolver().query(contactUri, queryFields, null, null, null);
+
+            try{
+                if (c.getCount() == 0){
+                    return;
+                }
+                c.moveToFirst();
+                String contact = c.getString(0);
+                mRecord.setContact(contact);
+                mContactButton.setText(contact);
+            } finally {
+                c.close();
+            }
         }
     }
 
