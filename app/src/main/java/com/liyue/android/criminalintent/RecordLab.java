@@ -4,11 +4,13 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
 
 import com.liyue.android.criminalintent.database.RecordBaseHelper;
 import com.liyue.android.criminalintent.database.RecordCursorWrapper;
 import com.liyue.android.criminalintent.database.RecordDbSchema.RecordTable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -35,7 +37,6 @@ public class RecordLab {
     }
 
     public void updateRecord(Record r){
-        //嘿嘿
         String uuidString = r.getId().toString();
         ContentValues values = getContentValues(r);
         mDatabase.update(RecordTable.NAME, values,RecordTable.Cols.UUID + " = ?",
@@ -49,6 +50,10 @@ public class RecordLab {
 
     public void removeRecord(Record r){
         mDatabase.delete(RecordTable.NAME, RecordTable.Cols.UUID + " = ?", new String[]{r.getId().toString()});
+        File photoFile = getPhotoFile(r);
+        if (photoFile != null && photoFile.exists()){
+            photoFile.delete();
+        }
     }
 
     public List<Record> getRecords(){
@@ -90,6 +95,16 @@ public class RecordLab {
         values.put(RecordTable.Cols.CONTACT, record.getContact());
 
         return values;
+    }
+
+    public File getPhotoFile(Record record){
+        File externalFilesDir = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+        if (externalFilesDir == null){
+            return null;
+        }
+
+        return new File(externalFilesDir, record.getPhotoFilename());
     }
 
     private RecordCursorWrapper queryRecords(String whereClause, String[] whereArgs){

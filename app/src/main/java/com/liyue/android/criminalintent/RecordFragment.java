@@ -2,9 +2,16 @@ package com.liyue.android.criminalintent;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.ShareCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
@@ -18,7 +25,10 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
+import java.io.File;
 import java.util.Date;
 import java.util.UUID;
 
@@ -30,20 +40,28 @@ public class RecordFragment extends Fragment {
     private static final String ARG_RECORD_ID = "crime_id";
     private static final String DIALOG_DATE = "dialog_date";
     private static final String DIALOG_TIME = "dialog_time";
+    private static final String DIALOG_PHOTO = "dialog_photo";
     private static final int REQUEST_DATE = 0;
     private static final int REQUEST_TIME = 1;
+    private static final int REQUEST_CONTACT = 2;
+    private static final int REQUEST_PHOTO = 3;
     private Record mRecord;
     private EditText mTitleField;
     private Button mDateButton;
     private Button mTimeButton;
     private CheckBox mSolvedCheckBox;
     private Button mReportButton;
+    private Button mContactButton;
+    private ImageButton mCameraButton;
+    private ImageView mPhotoView;
+    private File mPhotoFile;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         UUID crimeId = (UUID)getArguments().getSerializable(ARG_RECORD_ID);
         mRecord = RecordLab.get(getActivity()).getRecord(crimeId);
+        mPhotoFile = RecordLab.get(getActivity()).getPhotoFile(mRecord);
         setHasOptionsMenu(true);
         returnResult();
     }
@@ -126,6 +144,26 @@ public class RecordFragment extends Fragment {
             }
         });
 
+        final Intent pickContact = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+        mContactButton = (Button)v.findViewById(R.id.record_contact);
+        mContactButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(pickContact, REQUEST_CONTACT);
+            }
+        });
+
+        PackageManager packageManager = getActivity().getPackageManager();
+        if (packageManager.resolveActivity(pickContact, PackageManager.MATCH_DEFAULT_ONLY) == null){
+            mContactButton.setEnabled(false);
+        }
+
+        if (mRecord.getContact() != null){
+            mContactButton.setText(mRecord.getContact());
+        } else {
+            mContactButton.setText(getString(R.string.record_contact_text));
+        }
+
         mReportButton = (Button)v.findViewById(R.id.record_report);
         mReportButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,9 +172,41 @@ public class RecordFragment extends Fragment {
                 i.setType("text/plain");
                 i.putExtra(Intent.EXTRA_TEXT, getRecordReport());
                 i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.record_report_subject));
+                i = Intent.createChooser(i, getString(R.string.send_report));
                 startActivity(i);
             }
         });
+
+        mCameraButton = (ImageButton)v.findViewById(R.id.record_camera);
+        final Intent captureImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        boolean canTakePhoto = mPhotoFile != null && captureImage.resolveActivity(packageManager) != null;
+        mCameraButton.setEnabled(canTakePhoto);
+
+        if (canTakePhoto){
+            Uri uri = Uri.fromFile(mPhotoFile);
+            captureImage.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        }
+        mCameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(captureImage, REQUEST_PHOTO);
+            }
+        });
+        mPhotoView = (ImageView)v.findViewById(R.id.record_photo);
+        mPhotoView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mPhotoFile == null || !mPhotoFile.exists()){
+                    return;
+                } else {
+                    PhotoViewFragment dialog = PhotoViewFragment.newInstance(mRecord.getId());
+                    FragmentManager manager = getFragmentManager();
+                    dialog.setTargetFragment(RecordFragment.this, REQUEST_PHOTO);
+                    dialog.show(manager, DIALOG_PHOTO);
+                }
+            }
+        });
+        updatePhotoView();
         return v;
     }
 
@@ -149,11 +219,28 @@ public class RecordFragment extends Fragment {
         if (requestCode == REQUEST_DATE){
             mRecord.setDate((Date)data.getSerializableExtra(DatePickerFragment.EXTRA_DATE));
             mDateButton.setText(mRecord.getDateString());
-        }
-
-        if (requestCode == REQUEST_TIME){
+        } else if (requestCode == REQUEST_TIME){
             mRecord.setDate((Date)data.getSerializableExtra(TimePickerFragment.EXTRA_TIME));
             mTimeButton.setText(mRecord.getTimeString());
+        } else if (requestCode == REQUEST_CONTACT && data != null){
+            Uri contactUri = data.getData();
+            String[] queryFields = new String[]{ContactsContract.Contacts.DISPLAY_NAME};
+
+            Cursor c = getActivity().getContentResolver().query(contactUri, queryFields, null, null, null);
+
+            try{
+                if (c.getCount() == 0){
+                    return;
+                }
+                c.moveToFirst();
+                String contact = c.getString(0);
+                mRecord.setContact(contact);
+                mContactButton.setText(contact);
+            } finally {
+                c.close();
+            }
+        } else if (requestCode == REQUEST_PHOTO){
+            updatePhotoView();
         }
     }
 
@@ -191,5 +278,14 @@ public class RecordFragment extends Fragment {
 
         String report = getString(R.string.record_report, mRecord.getTitle(), dateString, solvedString, contact);
         return report;
+    }
+
+    private void updatePhotoView(){
+        if (mPhotoFile == null || !mPhotoFile.exists()){
+            mPhotoView.setImageDrawable(null);
+        } else {
+            Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), getActivity());
+            mPhotoView.setImageBitmap(bitmap);
+        }
     }
 }

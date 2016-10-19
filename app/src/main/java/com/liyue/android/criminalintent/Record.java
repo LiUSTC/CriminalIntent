@@ -67,4 +67,9 @@ public class Record {
     public String getTimeString(){
         return DateFormat.format("kk:mm", mDate).toString();
     }
+
+    public String getPhotoFilename(){
+        return "IMG_" + getId().toString() + ".jpg";
+    }
+
 }
